@@ -8,17 +8,17 @@ class gpt_client():
 		self.temperature = 0
 		return
 
-	def load_api_key(key_file):
-		key_file = open(key_file)
-		key = key_file.readlines()
-		openai.api_key = key
+	def load_api_key(self, key_file):
+		self.key_file = open(key_file)
+		self.key = key_file.readlines()
+		self.openai.api_key = key
 		return
 
-	def load_model_davinci():
-		model = "text-davinci-003"
+	def load_model_davinci(self):
+		self.model = "text-davinci-003"
 		return
 
-	def chat(prompt):
+	def chat(self, prompt):
 		try:
 			response = openai.Completion.create(model=model, prompt=prompt, temperature=temperature)
 		except:

@@ -13,6 +13,7 @@ class recorder():
 	def __init__(self, output_file):
 		self.recording = False
 		self.output_file = output_file
+		self.stream = None
 
 	def start(self):
 		if self.recording: return

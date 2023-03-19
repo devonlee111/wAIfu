@@ -7,15 +7,15 @@ class whisper_client():
 		self.model = None
 		return
 
-	def load(model_name):
+	def load(self, model_name):
 		self.model = whisper.load_model(model_name)
 		return
 
-	def unload(model):
+	def unload(self, model):
 		del self.model
 		return
 
-	def transcribe(file):
+	def transcribe(self, file):
 		if MODEL == None:
 			raise Exception(EXCEPTION_NO_MODEL)
 
