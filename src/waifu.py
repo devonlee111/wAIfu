@@ -1,8 +1,8 @@
 from pynput import keyboard
 
-import gpt
+import chat
 import recorder
-import whisper
+import transcriber
 
 OPENAI_API_KEY_FILE = "./openai_key"
 WAVE_OUTPUT_FILE = "output.wav"
@@ -12,11 +12,11 @@ gpt_client = None
 whisper_client = None
 
 def load_waifu():
-	whisper_client = whisper.whisper_client()
+	whisper_client = transcriber.whisper_client()
 	whisper_client.load("base")
 
-	gpt_client = gpt.gpt_client()
-	gpt.load_api_key(OPENAI_API_KEY_FILE)
+	gpt_client = chat.gpt_client()
+	gpt_client.load_api_key(OPENAI_API_KEY_FILE)
 
 	voice_recorder = recorder.recorder(WAVE_OUTPUT_FILE)
 
