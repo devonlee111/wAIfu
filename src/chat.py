@@ -1,7 +1,7 @@
 import openai
 
 class gpt_client():
-	def __init__(self, output_file):
+	def __init__(self):
 		self.api_key = ""
 		self.model = None
 		self.prompt = ""
@@ -9,9 +9,10 @@ class gpt_client():
 		return
 
 	def load_api_key(self, key_file):
-		self.key_file = open(key_file)
-		self.key = key_file.readlines()
-		self.openai.api_key = key
+		key_file = open(key_file)
+		key = key_file.readlines()
+		self.api_key = key
+		openai.api_key = self.api_key
 		return
 
 	def load_model_davinci(self):

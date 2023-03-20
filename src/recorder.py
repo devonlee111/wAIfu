@@ -9,7 +9,7 @@ RECORD_SECONDS = 5
 
 p = pyaudio.PyAudio()
 
-class recorder():
+class audio_recorder():
 	def __init__(self, output_file):
 		self.recording = False
 		self.output_file = output_file

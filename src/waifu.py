@@ -23,7 +23,7 @@ class waifu():
 		self.gpt_client = chat.gpt_client()
 		self.gpt_client.load_api_key(OPENAI_API_KEY_FILE)
 
-		self.voice_recorder = recorder.recorder(WAVE_OUTPUT_FILE)
+		self.voice_recorder = recorder.audio_recorder(WAVE_OUTPUT_FILE)
 
 	def run_chat_pipeline(self):
 		prompt = ""
