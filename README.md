@@ -4,8 +4,6 @@ AI powered waifu
 
 ## **Requirements**
 
----
-
 ### **Environments**
 
 **Ubuntu**: This has been verified to work on Ubuntu 22.04
@@ -30,8 +28,6 @@ AI powered waifu
 
 ## **Installation**
 
----
-
 Install [Whisper](https://github.com/openai/whisper) and [TorToise](https://github.com/neonbjb/tortoise-tts)
 
 Install PortAudio (Ubuntu): `sudo apt install portaudio19-dev`
@@ -42,12 +38,9 @@ Install requirements: `pip install -r requirements.txt`
 
 ## **Usage**
 
----
-
 WIP
 
 ## **How it Works**
 
----
 
 WIP
