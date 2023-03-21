@@ -24,9 +24,9 @@ AI powered waifu
 
 **[TorToiSe](https://github.com/neonbjb/tortoise-tts)**: TorToiSe(TTS) is used for synthesizing the AI's speech
 
-**PortAudio (Ubuntu)**: PortAudio may be required for python to be able to record your microphone
-
 **[OpenAI](https://platform.openai.com/overview)**: You require an OpenAI API key which you can aquire on their site for chat generation
+
+**PortAudio (Ubuntu)**: PortAudio may be required for python to be able to record your microphone
 
 ## **Installation**
 
