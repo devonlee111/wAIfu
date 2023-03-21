@@ -16,7 +16,7 @@ class whisper_client():
 		return
 
 	def transcribe(self, file):
-		if MODEL == None:
+		if self.model == None:
 			raise Exception(EXCEPTION_NO_MODEL)
 
 		transcription = self.model.transcribe(file)

@@ -1,3 +1,4 @@
+import json
 import openai
 
 class gpt_client():
@@ -10,7 +11,7 @@ class gpt_client():
 
 	def load_api_key(self, key_file):
 		key_file = open(key_file)
-		key = key_file.readlines()
+		key = key_file.read.strip()
 		self.api_key = key
 		openai.api_key = self.api_key
 		return
@@ -21,7 +22,7 @@ class gpt_client():
 
 	def chat(self, prompt):
 		try:
-			response = openai.Completion.create(model=model, prompt=prompt, temperature=temperature)
+			response = openai.Completion.create(model=self.model, prompt=prompt, temperature=self.temperature)
 		except:
 			raise
-		return response
+		return response["choices"][0]["text"]

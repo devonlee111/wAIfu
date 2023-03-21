@@ -22,6 +22,7 @@ class waifu():
 
 		self.gpt_client = chat.gpt_client()
 		self.gpt_client.load_api_key(OPENAI_API_KEY_FILE)
+		self.gpt_client.load_model_davinci()
 
 		self.voice_recorder = recorder.audio_recorder(WAVE_OUTPUT_FILE)
 
@@ -29,35 +30,44 @@ class waifu():
 		prompt = ""
 		try:
 			prompt = self.whisper_client.transcribe(WAVE_OUTPUT_FILE)
+			print("User: \"" + prompt + "\"")
 		except err:
 			print(err)
 			return
 
+		if prompt == "":
+			return
+
 		try:
-			self.gpt_client.chat(prompt)
+			response = self.gpt_client.chat(prompt)
+			print("wAIfu: \"" + response + "\"")
 		except err:
-			print (err)
+			print(err)
 			return
 
 		# TODO integrate voice synthesis when added
 
 	def on_press(self, key):
 		if key.char == 'r':
-			self.voice_recorder.start()
-		return True
+			if not self.voice_recorder.recording:
+				self.voice_recorder.start()
+				return True
+			else:
+				self.voice_recorder.stop()
+				self.run_chat_pipeline()
+
+			return True
+
+		return false
 
 	def on_release(self, key):
-		if key.char == 'r':
-			self.voice_recorder.stop()
-			self.run_chat_pipeline()
-			return True
-		# Any other key ends the program
-		return False
+		return True
 
 	def run(self):
-		print("Press and hold the 'r' key to begin recording")
-		print("Release the 'r' key to end recording")
-		self.listener = keyboard.Listener(on_press=on_press, on_release=on_release)
+		print("Press the 'r' key to begin recording")
+		print("Press the 'r' key again to end recording")
+		print("Press anything else to end the program")
+		self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
 		self.listener.start()
 		self.listener.join()
 
