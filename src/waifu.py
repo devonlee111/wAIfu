@@ -1,6 +1,7 @@
 from pynput import keyboard
 
 import chat
+import os
 import recorder
 import transcriber
 
@@ -46,6 +47,11 @@ class waifu():
 			return
 
 		# TODO integrate voice synthesis when added
+
+		self.cleanup()
+
+	def cleanup(self):
+		os.remove(WAVE_OUTPUT_FILE)
 
 	def on_press(self, key):
 		if key.char == 'r':
