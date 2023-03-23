@@ -6,7 +6,7 @@ class gpt_client():
 		self.api_key = ""
 		self.model = None
 		self.prompt = ""
-		self.temperature = 0
+		self.temperature = 1
 		return
 
 	def load_api_key(self, key_file):
