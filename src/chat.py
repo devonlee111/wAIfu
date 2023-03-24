@@ -24,12 +24,12 @@ class gpt_client():
 
 	def chat(self, messages):
 		try:
-			response = openai.Completion.create(
+			response = openai.ChatCompletion.create(
 				model = self.model,
 				messages = messages,
 				temperature=self.temperature,
 				frequency_penalty=self.freq_pen,
-				presence_penaly=self.pres_pen,
+				presence_penalty=self.pres_pen,
 				stop=["\n"]
 			)
 		except:

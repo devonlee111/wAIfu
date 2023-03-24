@@ -23,7 +23,7 @@ class waifu():
 		# Prompt message used to prime the model before being given chat message(s)
 		# This can be anything and can include such ideas as the AI's role, personality traits, disposition etc...
 		# Larger prompt primer will be more costly when hitting the openAI API
-		self.primer = "simulate a conversation with multiple people, friend and wAIfu. wAIfu is a kind, clever, witty, friendly, and sometimes sarcastic person. They enjoy playing games and relaxing at home."
+		self.primer = "simulate a conversation with 2 people, friend and wAIfu. wAIfu is a kind, clever, witty, friendly, and sometimes sarcastic person. They enjoy playing games and relaxing at home."
 
 		self.conversation = list()
 		return
@@ -35,7 +35,7 @@ class waifu():
 
 		self.gpt_client = chat.gpt_client()
 		self.gpt_client.load_api_key(OPENAI_API_KEY_FILE)
-		self.gpt_client.load_model_davinci()
+		self.gpt_client.load_model_gpt_3_5()
 
 		self.voice_recorder = recorder.audio_recorder(WAVE_OUTPUT_FILE)
 		return
@@ -44,7 +44,7 @@ class waifu():
 		prompt = ""
 		# Transcribe user speech into text
 		try:
-			user_message = self.whisper_client.transcribe(WAVE_OUTPUT_FILE)
+			user_message = self.whisper_client.transcribe(WAVE_OUTPUT_FILE).strip()
 			print("You: \"" + user_message + "\"")
 		except err:
 			print(err)
@@ -54,13 +54,14 @@ class waifu():
 			return
 
 		# Update conversation with user input
-		self.conversation.append({ "role": "user", "content": "friend: " + user_message })
+		self.conversation.append({ "role": "user", "content": "Friend: " + user_message })
 
 		# OpenAI chat completion
 		try:
-			full_conversation = self.conversation.insert(0, {"role": "system", "content": self.primer})
+			full_conversation = self.conversation
+			full_conversation.insert(0, {"role": "system", "content": self.primer})
 			response = self.gpt_client.chat(full_conversation)
-			print("wAIfu: \"" + response + "\"")
+			print(response)
 		except err:
 			print(err)
 			return
