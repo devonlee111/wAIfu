@@ -5,7 +5,7 @@ import os
 import recorder
 import transcriber
 
-OPENAI_API_KEY_FILE = "./openai_key"
+OPENAI_API_KEY_FILE = "openai_key"
 WAVE_OUTPUT_FILE = "output.wav"
 CHAT_HISTORY_FILE = "chat.history"
 
@@ -23,7 +23,9 @@ class waifu():
 		# Prompt message used to prime the model before being given chat message(s)
 		# This can be anything and can include such ideas as the AI's role, personality traits, disposition etc...
 		# Larger prompt primer will be more costly when hitting the openAI API
-		self.prompt_primer = "wAIfu is a kind, clever, creative, and sometimes sarcastic friend"
+		self.primer = "simulate a conversation with multiple people, friend and wAIfu. wAIfu is a kind, clever, witty, friendly, and sometimes sarcastic person. They enjoy playing games and relaxing at home."
+
+		self.conversation = list()
 		return
 
 
@@ -38,45 +40,47 @@ class waifu():
 		self.voice_recorder = recorder.audio_recorder(WAVE_OUTPUT_FILE)
 		return
 
-	def set_personality(self, personality):
-		self.personality = personality
-		return
-
 	def run_chat_pipeline(self):
 		prompt = ""
 		# Transcribe user speech into text
 		try:
-			prompt = self.whisper_client.transcribe(WAVE_OUTPUT_FILE)
-			print("You: \"" + prompt + "\"")
+			user_message = self.whisper_client.transcribe(WAVE_OUTPUT_FILE)
+			print("You: \"" + user_message + "\"")
 		except err:
 			print(err)
 			return
 
-		if prompt == "":
+		if user_message == "":
 			return
+
+		# Update conversation with user input
+		self.conversation.append({ "role": "user", "content": "user_message" })
 
 		# OpenAI chat completion
 		try:
-			full_prompt = self.prompt_primer + "\n\nYou: " + prompt + "\nwAIfu:"
-			response = self.gpt_client.chat(prompt)
+			full_conversation = self.conversation.insert(0, {"role": "system", "content": self.primer})
+			response = self.gpt_client.chat(full_conversation)
 			print("wAIfu: \"" + response + "\"")
 		except err:
 			print(err)
 			return
 
+		# Update conversation with wAIfu response
+		self.conversation.append({ "role": "assistant", "content": "response" })
+
+		# Trim conversation if it gets too large
+		if len(self.conversation) > self.memory_length:
+			self.conversation = self.conversation[2:]
+
 		# Save chat history to history file
 		chat_file = open(CHAT_HISTORY_FILE, "a")
-		chat_file.write("\nYou: " + prompt)
-		chat_file.write("\nwAIfu: + response")
+		chat_file.write("\nYou: " + user_message)
+		chat_file.write("\nwAIfu: " + response)
 		chat_file.close()
 
 		# TODO integrate voice synthesis when added
 
 		self.cleanup()
-
-	def build_prompt(self, prompt):
-		final_prompt = prompt
-		return final_prompt
 
 	def cleanup(self):
 		os.remove(WAVE_OUTPUT_FILE)
@@ -93,7 +97,7 @@ class waifu():
 
 			return True
 
-		return false
+		return False
 
 	def on_release(self, key):
 		return True
