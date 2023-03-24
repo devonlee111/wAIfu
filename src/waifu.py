@@ -54,7 +54,7 @@ class waifu():
 			return
 
 		# Update conversation with user input
-		self.conversation.append({ "role": "user", "content": "user_message" })
+		self.conversation.append({ "role": "user", "content": "friend: " + user_message })
 
 		# OpenAI chat completion
 		try:
@@ -66,7 +66,7 @@ class waifu():
 			return
 
 		# Update conversation with wAIfu response
-		self.conversation.append({ "role": "assistant", "content": "response" })
+		self.conversation.append({ "role": "assistant", "content": "wAIfu: " + response })
 
 		# Trim conversation if it gets too large
 		if len(self.conversation) > self.memory_length:
