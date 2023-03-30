@@ -20,7 +20,7 @@ AI powered waifu
 
 **[Whisper](https://github.com/openai/whisper)**: Whisper is used for the transcription process and needs to be installed in your environment
 
-**[TorToiSe](https://github.com/neonbjb/tortoise-tts)**: TorToiSe(TTS) is used for synthesizing the AI's speech
+**[Coqui AI](https://github.com/coqui-ai/TTS)**: Coqui AI is used for synthesizing the AI's speech [WIP]
 
 **[OpenAI](https://platform.openai.com/overview)**: You require an OpenAI API key which you can aquire on their site for chat generation
 
@@ -35,6 +35,8 @@ Install PortAudio (Ubuntu): `sudo apt install portaudio19-dev`
 - version may or may not be different based on time and distribution
 
 Install requirements: `pip install -r requirements.txt`
+
+Install Coqui AI: [WIP]
 
 ## **Usage**
 
