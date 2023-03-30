@@ -1,13 +1,17 @@
 from pynput import keyboard
 
-import chat
 import os
+
+import chat
 import recorder
 import transcriber
+import voice
 
 OPENAI_API_KEY_FILE = "openai_key"
 WAVE_OUTPUT_FILE = "output.wav"
 CHAT_HISTORY_FILE = "chat.history"
+VOICE_OUTPUT_FILE = "response.wav"
+DEFAULT_SPEECH_MODEL = "tts_models/en/ljspeech/glow-tts"
 
 class waifu():
 	def __init__(self):
@@ -15,6 +19,7 @@ class waifu():
 		self.gpt_client = None
 		self.whisper_client = None
 		self.listener = None
+		self.voice = None
 
 		# How many chat messages should be taken into consideration for the chat prompt
 		# Larger memory length will be more costly when hitting the openAI API
@@ -38,6 +43,10 @@ class waifu():
 		self.gpt_client.load_model_gpt_3_5()
 
 		self.voice_recorder = recorder.audio_recorder(WAVE_OUTPUT_FILE)
+
+		self.voice = voice.coqui_voice_synthesizer()
+		self.voice.set_model(DEFAULT_SPEECH_MODEL)
+		self.voice.load()
 		return
 
 	def run_chat_pipeline(self):
@@ -80,6 +89,9 @@ class waifu():
 		chat_file.close()
 
 		# TODO integrate voice synthesis when added
+		self.voice.synthesize_speech(response, VOICE_OUTPUT_FILE)
+
+		# TODO playback of voice output file
 
 		self.cleanup()
 
