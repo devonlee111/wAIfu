@@ -88,7 +88,6 @@ class waifu():
 		chat_file.write("\nwAIfu: " + response)
 		chat_file.close()
 
-		# TODO integrate voice synthesis when added
 		self.voice.synthesize_speech(response, VOICE_OUTPUT_FILE)
 
 		# TODO playback of voice output file
@@ -97,6 +96,7 @@ class waifu():
 
 	def cleanup(self):
 		os.remove(WAVE_OUTPUT_FILE)
+		# TODO cleanup voice output file
 		return
 
 	def on_press(self, key):

@@ -1,8 +1,8 @@
-from TTS.TTS.api import TTS
+from TTS.api import TTS
 
 YOURTTS_MODEL = "tts_models/multilingual/multi-dataset/your_tts"
 
-def coqui_voice_synthesizer():
+class coqui_voice_synthesizer():
 	def __init__(self):
 		self.tts = None
 		self.model = None
