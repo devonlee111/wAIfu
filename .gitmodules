@@ -1,3 +1,4 @@
 [submodule "src/TTS"]
 	path = src/TTS
 	url = https://github.com/coqui-ai/TTS.git
+	branch = main
