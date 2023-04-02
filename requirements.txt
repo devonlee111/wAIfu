@@ -1,0 +1,5 @@
+openai
+openai-whisper
+pyaudio
+pynput
+playsound
