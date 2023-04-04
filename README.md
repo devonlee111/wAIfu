@@ -8,13 +8,13 @@ AI powered waifu
 
 **Ubuntu**: This has been verified to work on Ubuntu 22.04
 
+**Note**: Currently this requires an X Window environment, and wont function on headless systems
+
 ### **Hardware**
 
 **GPU**: It is recommended to run on an Nvidia GPU as the models will take a long time to run on CPU.
 
 ### **Software**
-
-**Conda**: It is recommended to use conda (anaconda/Miniconda) to manage your environment.
 
 **Python**: This has been tested to work on python version 3.10.9
 
@@ -28,6 +28,10 @@ AI powered waifu
 
 ## **Installation**
 
+**Conda**: It is recommended to use conda (anaconda/Miniconda) to manage your environment.
+
+Install wAIfu: `git clone --recursive https://github.com/devonlee111/wAIfu.git`
+
 Install [Whisper](https://github.com/openai/whisper) and [TorToise](https://github.com/neonbjb/tortoise-tts)
 
 Install PortAudio (Ubuntu): `sudo apt install portaudio19-dev`
@@ -36,11 +40,26 @@ Install PortAudio (Ubuntu): `sudo apt install portaudio19-dev`
 
 Install requirements: `pip install -r requirements.txt`
 
-Install Coqui AI: [WIP]
+Install Coqui AI: Coqui has been provided as a submodule already
+```
+cd wAIfu/src/TTS
+make system-deps
+make install
+```
 
 ## **Usage**
 
-WIP
+1. Copy your OpenAI API key into the `src/openai_key` file to be able to make API calls.
+
+2. Ensure that you have a microphone and audio playback device or you will not be able to interact or hear the program.
+
+3. Run waifu.py `python waifu.py`.
+
+4. Begin recording by pressing the "r" key and press "r" again to end recording.
+
+5. Talk to your waifu when recording
+
+6. Watch the magic happen.
 
 ## **How it Works**
 
