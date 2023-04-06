@@ -1,5 +1,6 @@
 from pynput import keyboard
 from playsound import playsound
+
 import os
 
 import chat
@@ -7,11 +8,10 @@ import recorder
 import transcriber
 import voice
 
-OPENAI_API_KEY_FILE = "openai_key"
+CONFIG_FILE = "config.json"
 WAVE_OUTPUT_FILE = "output.wav"
 CHAT_HISTORY_FILE = "chat.history"
 VOICE_OUTPUT_FILE = "response.wav"
-DEFAULT_SPEECH_MODEL = "tts_models/en/ljspeech/glow-tts"
 
 class waifu():
 	def __init__(self):
@@ -28,42 +28,101 @@ class waifu():
 		# Prompt message used to prime the model before being given chat message(s)
 		# This can be anything and can include such ideas as the AI's role, personality traits, disposition etc...
 		# Larger prompt primer will be more costly when hitting the openAI API
-		self.primer = "simulate a conversation with 2 people, friend and wAIfu. wAIfu is a kind, clever, witty, friendly, and sometimes sarcastic person. They enjoy playing games and relaxing at home."
+		self.primer = ""
 
 		self.conversation = list()
+
+		self.ai_name = ""
+		self.user_name = ""
+
+		self.voice_file = ""
 		return
 
-
 	def load_waifu(self):
+		openai_key = ""
+		prompt_file = ""
+		whisper_model = ""
+		coqui_speech_model = ""
+
+		try :
+			with open(CONFIG_FILE) as config_file:
+				data = json.load(config_file)
+				openai_key = data["openAIKey"]
+				prompt_file = data["promptFile"]
+				self.ai_name = data["aiName"]
+				self.user_name = data["userName"]
+				coqui_speech_model = data["coquiSpeechModel"]
+				whisper_model = data["whisperModel"]
+				self.voice_file = data["cloneVoiceFile"]
+		except Exception as e:
+			print("failed to load wAIfu configs...")
+			print(e.message)
+			quit(1)
+
+		file = open(prompt_file)
+		self.primer = file.read().strip()
+		file.close()
+
 		self.whisper_client = transcriber.whisper_client()
-		self.whisper_client.load("base")
+		self.whisper_client.load(whisper_model)
 
 		self.gpt_client = chat.gpt_client()
-		self.gpt_client.load_api_key(OPENAI_API_KEY_FILE)
+		self.gpt_client.load_api_key(openai_key)
 		self.gpt_client.load_model_gpt_3_5()
 
 		self.voice_recorder = recorder.audio_recorder(WAVE_OUTPUT_FILE)
 
 		self.voice = voice.coqui_voice_synthesizer()
-		self.voice.set_model(DEFAULT_SPEECH_MODEL)
+		self.voice.set_model(coqui_speech_model)
 		self.voice.load()
+
+		if not self.verify_waifu_configs():
+			exit(1)
+
 		return
+
+	def verify_waifu_configs(self):
+		if self.primer == "":
+			print("no prompt primer found...")
+			return False
+
+		if self.ai_name == "":
+			print("AI's name has not been configured...")
+			return False
+
+		if self.user_name == "":
+			print("User's name has not been configured...")
+			return False
+
+		if self.whisper_client.model == "":
+			print("Whisper voice recognition model has not been configured...")
+			return False
+
+		if self.gpt_client.api_key == "" or self.gpt_client.api_key == "YOUR API KEY GOES HERE":
+			print("OpenAI API key has not been configured...")
+			return False
+
+		if self.coqui_voice_synthesizer.model == "":
+			print("Coqui speech model has not been configured...")
+			return False
+
+		return True
 
 	def run_chat_pipeline(self):
 		prompt = ""
 		# Transcribe user speech into text
 		try:
 			user_message = self.whisper_client.transcribe(WAVE_OUTPUT_FILE).strip()
-			print("You: \"" + user_message + "\"")
-		except err:
-			print(err)
+			print(f"{ self.user_name }: \"{ user_message }\"")
+		except Exception as e:
+			print(e.message)
 			return
 
 		if user_message == "":
 			return
 
 		# Update conversation with user input
-		self.conversation.append({ "role": "user", "content": "Friend: " + user_message })
+		self.conversation.append({ "role": "user", "content": f"{ self.user_name }: { user_message }"})
 
 		# OpenAI chat completion
 		try:
@@ -71,8 +130,8 @@ class waifu():
 			full_conversation.insert(0, {"role": "system", "content": self.primer})
 			response = self.gpt_client.chat(full_conversation)
 			print(response)
-		except err:
-			print(err)
+		except Exception as e:
+			print(e.message)
 			return
 
 		# Update conversation with wAIfu response
@@ -84,22 +143,22 @@ class waifu():
 
 		# Save chat history to history file
 		chat_file = open(CHAT_HISTORY_FILE, "a")
-		chat_file.write("\nYou: " + user_message)
-		chat_file.write("\nwAIfu: " + response)
+		chat_file.write(f"\n{ self.user_name }: { user_message }")
+		chat_file.write(f"\n{ self.ai_name }: { response } ")
 		chat_file.close()
 
-		response = response[len("wAIfu: "):]
-		self.voice.synthesize_speech(response, VOICE_OUTPUT_FILE)
-		playsound(VOICE_OUTPUT_FILE)
-
-		# TODO playback of voice output file
+		response = response[len(f"{ self.ai_name }: "):]
+		try:
+			self.voice.synthesize_speech(response, VOICE_OUTPUT_FILE, self.voice_file)
+			playsound(VOICE_OUTPUT_FILE)
+		except Exception as e:
+			print(e.message)
 
 		self.cleanup()
 
 	def cleanup(self):
 		os.remove(WAVE_OUTPUT_FILE)
 		os.remove(VOICE_OUTPUT_FILE)
-		# TODO cleanup voice output file
 		return
 
 	def on_press(self, key):

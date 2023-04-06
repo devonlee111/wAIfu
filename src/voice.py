@@ -28,9 +28,8 @@ class coqui_voice_synthesizer():
 		if self.model != YOURTTS_MODEL:
 			try:
 				self.tts.tts_to_file(text, file_path=output_file)
-			except err:
-				print(err)
-				raise err
+			except Exception as e:
+				raise e
 
 		if self.tts.speakers != None and self.speaker == None:
 			raise Exception(f"tts model { self.model } requires a speaker selection, but none was loaded")
@@ -43,15 +42,13 @@ class coqui_voice_synthesizer():
 		if self.model == YOURTTS_MODEL and voice_to_clone != None:
 			try:
 				self.tts.tts_to_file(text, speaker_wav=voice_to_clone, language=self.language, file_path=output_file)
-			except err:
-				print(err)
-				raise err
+			except Exception as e:
+				raise e
 			return
 
 		try:
 			self.tts.tts_to_file(text, speaker=self.speaker, language=self.language, file_path=output_file)
-		except err:
-				print(err)
-				raise err
+		except Exception as e:
+				raise e
 
 		return

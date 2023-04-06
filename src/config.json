@@ -1,0 +1,9 @@
+{
+	"openAIKey": "YOUR API KEY GOES HERE",
+	"promptFile": "prompt.txt",
+	"aiName": "wAIfu",
+	"userName": "friend",
+	"whisperModel": "base",
+	"coquiSpeechModel": "tts_models/en/ljspeech/glow-tts",
+	"cloneVoiceFile": ""
+}

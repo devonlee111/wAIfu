@@ -11,11 +11,8 @@ class gpt_client():
 		self.pres_pen = 2.0
 		return
 
-	def load_api_key(self, key_file):
-		key_file = open(key_file)
-		key = key_file.read().strip()
-		self.api_key = key
-		openai.api_key = self.api_key
+	def load_api_key(self, key):
+		openai.api_key = key
 		return
 
 	def load_model_gpt_3_5(self):
