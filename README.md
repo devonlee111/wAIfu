@@ -49,17 +49,21 @@ make install
 
 ## **Usage**
 
-1. Copy your OpenAI API key into the `src/openai_key` file to be able to make API calls.
+1. Copy your OpenAI API key into the `openAIKey` field in the `src/config.json` file to be able to make API calls.
 
-2. Ensure that you have a microphone and audio playback device or you will not be able to interact or hear the program.
+2. Customize your prompt in the prompt file `src/prompt.txt`
 
-3. Run waifu.py `python waifu.py`.
+3. Customize the rest of the configs as you wish
 
-4. Begin recording by pressing the "r" key and press "r" again to end recording.
+4. Ensure that you have a microphone and audio playback device or you will not be able to interact or hear the program.
 
-5. Talk to your waifu when recording
+5. Run waifu.py `python waifu.py`.
 
-6. Watch the magic happen.
+6. Begin recording by pressing the "r" key and press "r" again to end recording.
+
+7. Talk to your waifu when recording
+
+8. Watch the magic happen.
 
 ## **How it Works**
 
