@@ -44,6 +44,8 @@ class waifu():
 		prompt_file = ""
 		whisper_model = ""
 		coqui_speech_model = ""
+		coqui_model_speaker = ""
+		coqui_model_language = ""
 
 		try :
 			with open(CONFIG_FILE) as config_file:
@@ -53,6 +55,8 @@ class waifu():
 				self.ai_name = data["aiName"]
 				self.user_name = data["userName"]
 				coqui_speech_model = data["coquiSpeechModel"]
+				coqui_model_speaker = data["coquiModelSpeaker"]
+				coqui_model_language = data["coquiModelLanguage"]
 				whisper_model = data["whisperModel"]
 				self.voice_file = data["cloneVoiceFile"]
 		except Exception as e:
@@ -74,7 +78,7 @@ class waifu():
 		self.voice_recorder = recorder.audio_recorder(WAVE_OUTPUT_FILE)
 
 		self.voice = voice.coqui_voice_synthesizer()
-		self.voice.set_model(coqui_speech_model)
+		self.voice.set_model(coqui_speech_model, speaker=coqui_model_speaker, language=coqui_model_language)
 		self.voice.load()
 
 		if not self.verify_waifu_configs():
