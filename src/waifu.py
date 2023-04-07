@@ -1,6 +1,7 @@
 from pynput import keyboard
 from playsound import playsound
 
+import json
 import os
 
 import chat
@@ -102,7 +103,7 @@ class waifu():
 			print("OpenAI API key has not been configured...")
 			return False
 
-		if self.coqui_voice_synthesizer.model == "":
+		if self.model == "":
 			print("Coqui speech model has not been configured...")
 			return False
 

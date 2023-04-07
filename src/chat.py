@@ -12,6 +12,7 @@ class gpt_client():
 		return
 
 	def load_api_key(self, key):
+		self.api_key = key
 		openai.api_key = key
 		return
 
