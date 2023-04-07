@@ -103,7 +103,7 @@ class waifu():
 			print("OpenAI API key has not been configured...")
 			return False
 
-		if self.model == "":
+		if self.voice.model == "":
 			print("Coqui speech model has not been configured...")
 			return False
 
