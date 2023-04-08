@@ -65,6 +65,10 @@ Within the `config.json` file, there are a number of fields that you can configu
 
 `coquiSpeechModel`: Which model you want Coqui to use for generating speech. More information on the available models/how to list them can be found on the [coqui github](https://github.com/coqui-ai/TTS) or in their [docs](https://tts.readthedocs.io/en/latest/). You can also train your own or fine tune a model to use if you want.
 
+`coquiModelSpeaker`: Which speaker to use in multi-speaker models. May be required based on the Coqui model used for speech generation. Refer to their [docs](https://tts.readthedocs.io/en/latest/) for more information
+
+`coquiModelLanguage`: What language to generate speech for. May be required based on the Coqui model used for speech generation. Refer to their [docs](https://tts.readthedocs.io/en/latest/) for more information
+
 `cloneVoiceFile`: Only works with Coqui's `tts_models/multilingual/multi-dataset/your_tts` model. It uses Coqui's YourTTS model to attempt to clone a speaker from a given recording file.
 
 ## **Usage**
