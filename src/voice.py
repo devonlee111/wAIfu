@@ -31,7 +31,7 @@ class coqui_voice_synthesizer():
 			except Exception as e:
 				raise e
 
-		if self.tts.speakers != None and self.speaker == None:
+		if self.tts.speakers != None and self.speaker == None and voice_to_clone == None:
 			raise Exception(f"tts model { self.model } requires a speaker selection, but none was loaded")
 
 		if self.tts.languages != None and self.language == None:
