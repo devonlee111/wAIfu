@@ -16,79 +16,113 @@ VOICE_OUTPUT_FILE = "response.wav"
 
 class waifu():
 	def __init__(self):
+		self.whisper_API_key = ""
+		self.gpt_API_key = ""
+		self.eleven_labs_API_key = ""
 		self.voice_recorder = None
 		self.gpt_client = None
 		self.whisper_client = None
 		self.listener = None
 		self.voice = None
 
-		# How many chat messages should be taken into consideration for the chat prompt
-		# Larger memory length will be more costly when hitting the openAI API
-		self.memory_length = 15
+		# Name assigned to the AI
+		self.ai_name = ""
+
+		# Name to refer to the user as
+		self.user_name = ""
+
+		self.language = ""
 
 		# Prompt message used to prime the model before being given chat message(s)
 		# This can be anything and can include such ideas as the AI's role, personality traits, disposition etc...
 		# Larger prompt primer will be more costly when hitting the openAI API
 		self.primer = ""
 
+		# How many chat messages should be taken into consideration for the chat prompt
+		# Larger memory length will be more costly when hitting the openAI API
+		self.memory_length = 15
+
+		# The chat message log stored in memory
 		self.conversation = list()
 
-		self.ai_name = ""
-		self.user_name = ""
-
+		# Voice file to attempt to clone
+		# Only works for coqui YourTTS model
 		self.voice_file = ""
 		return
 
 	def load_waifu(self):
-		openai_key = ""
 		prompt_file = ""
-		whisper_model = ""
-		coqui_speech_model = ""
-		coqui_model_speaker = ""
-		coqui_model_language = ""
+		data = None
 
+		# Load configs
 		try :
 			with open(CONFIG_FILE) as config_file:
 				data = json.load(config_file)
-				openai_key = data["openAIKey"]
 				prompt_file = data["promptFile"]
+				self.whisper_API_key = data["openAIWhisperAPIKey"]
+				self.gpt_API_key = data["openAIGPTAPIKey"]
+				self.eleven_labs_API_key = data["elevenLabsAPIKey"]
 				self.ai_name = data["aiName"]
 				self.user_name = data["userName"]
-				coqui_speech_model = data["coquiSpeechModel"]
-				coqui_model_speaker = data["coquiModelSpeaker"]
-				coqui_model_language = data["coquiModelLanguage"]
-				whisper_model = data["whisperModel"]
+				self.language = data["language"]
 				self.voice_file = data["cloneVoiceFile"]
 		except Exception as e:
 			print("failed to load wAIfu configs...")
 			print(e.message)
 			quit(1)
 
+		# Get prompt primer
 		file = open(prompt_file)
 		self.primer = file.read().strip()
 		file.close()
 
-		self.whisper_client = transcriber.whisper_client()
-		self.whisper_client.load(whisper_model)
+		# Perform final verifications
+		if not self.verify_waifu_configs():
+			exit(1)
 
+		# Setup whisper client
+		self.whisper_client = transcriber.whisper_client()
+		if self.whisper_API_key == "":
+			whisper_model = data["whisperModel"]
+			self.whisper_client.load(whisper_model, self.language)
+		else:
+			self.whisper_client.use_API()
+			self.whisper_client.set_api_key(self.whisper_API_key)
+
+		# Setup gpt client
 		self.gpt_client = chat.gpt_client()
-		self.gpt_client.load_api_key(openai_key)
+		self.gpt_client.load_api_key(self.gpt_API_key)
 		self.gpt_client.load_model_gpt_3_5()
 
+		# Setup voice recorder
 		self.voice_recorder = recorder.audio_recorder(WAVE_OUTPUT_FILE)
 
+		# Setup voice synthesizer
 		self.voice = voice.coqui_voice_synthesizer()
-		self.voice.set_model(coqui_speech_model, speaker=coqui_model_speaker, language=coqui_model_language)
-		self.voice.load()
+		if self.eleven_labs_API_key == "":
+			coqui_speech_model = data["coquiSpeechModel"]
+			coqui_model_speaker = data["coquiModelSpeaker"]
 
-		if not self.verify_waifu_configs():
+			self.voice.set_model(coqui_speech_model, speaker=coqui_model_speaker, language=self.language)
+			self.voice.load()
+		else:
+			#TODO ElevenLabs API integration
+			print("ElevenLabs API integration in progress")
+			exit(1)
+
+		# Perform final verifications
+		if not self.verify_waifu_setup():
 			exit(1)
 
 		return
 
-	def verify_waifu_configs(self):
+	def verify_initial_waifu_configs(self):
 		if self.primer == "":
 			print("no prompt primer found...")
+			return False
+
+		if self.gpt_API_key == "":
+			print("OpenAI API key has not been configured...")
 			return False
 
 		if self.ai_name == "":
@@ -99,12 +133,15 @@ class waifu():
 			print("User's name has not been configured...")
 			return False
 
-		if self.whisper_client.model == "":
-			print("Whisper voice recognition model has not been configured...")
+		if self.language == "":
+			print("no language has been set...")
 			return False
 
-		if self.gpt_client.api_key == "" or self.gpt_client.api_key == "YOUR API KEY GOES HERE":
-			print("OpenAI API key has not been configured...")
+		return True
+
+	def verify_waifu_setup(self):
+		if self.whisper_client.model == "":
+			print("Whisper voice recognition model has not been configured...")
 			return False
 
 		if self.voice.model == "":

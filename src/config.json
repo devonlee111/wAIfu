@@ -1,11 +1,13 @@
 {
-	"openAIKey": "YOUR API KEY GOES HERE",
+	"openAIWhisperAPIKey": "",
+	"openAIGPTAPIKey": "",
+	"elevenLabsAPIKey": "",
 	"promptFile": "prompt.txt",
+	"language": "en",
 	"aiName": "wAIfu",
 	"userName": "friend",
 	"whisperModel": "base",
 	"coquiSpeechModel": "tts_models/en/ljspeech/glow-tts",
 	"coquiModelSpeaker": "",
-	"coquiModelLanguage": "en",
 	"cloneVoiceFile": ""
 }
