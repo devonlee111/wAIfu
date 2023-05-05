@@ -1,13 +1,16 @@
 {
-	"openAIWhisperAPIKey": "",
-	"openAIGPTAPIKey": "",
-	"elevenLabsAPIKey": "",
-	"promptFile": "prompt.txt",
-	"language": "en",
-	"aiName": "wAIfu",
-	"userName": "friend",
-	"whisperModel": "base",
-	"coquiSpeechModel": "tts_models/en/ljspeech/glow-tts",
-	"coquiModelSpeaker": "",
-	"cloneVoiceFile": ""
+  "openAIWhisperAPIKey": "",
+  "openAIGPTAPIKey": "",
+  "elevenLabsAPIKey": "",
+  "voiceEngine": "coquiTTS",
+  "sttEngine": "whisper local",
+  "promptFile": "prompt.txt",
+  "language": "en",
+  "aiName": "wAIfu",
+  "userName": "friend",
+  "whisperModel": "base",
+  "coquiSpeechModel": "tts_models/en/ljspeech/glow-tts",
+  "coquiModelSpeaker": "",
+  "cloneVoiceFile": "",
+  "elevenLabsVoiceID": ""
 }

@@ -14,6 +14,12 @@ WAVE_OUTPUT_FILE = "output.wav"
 CHAT_HISTORY_FILE = "chat.history"
 VOICE_OUTPUT_FILE = "response.wav"
 
+VOICE_ENGINE_COQUI = "coquiTTS"
+VOICE_ENGINE_ELEVENLABS = "eleven labs"
+
+STT_ENGINE_WHISPER_LOCAL = "whisper local"
+STT_ENGINE_WHISPER_API = "whisper api"
+
 class waifu():
 	def __init__(self):
 		self.whisper_API_key = ""
@@ -53,19 +59,23 @@ class waifu():
 	def load_waifu(self):
 		prompt_file = ""
 		data = None
+		voice_engine = ""
+		tts_engine = ""
 
 		# Load configs
 		try :
 			with open(CONFIG_FILE) as config_file:
 				data = json.load(config_file)
 				prompt_file = data["promptFile"]
+				voice_engine = data["voiceEngine"]
+				tts_engine = data["ttsEngine"]
 				self.whisper_API_key = data["openAIWhisperAPIKey"]
 				self.gpt_API_key = data["openAIGPTAPIKey"]
 				self.eleven_labs_API_key = data["elevenLabsAPIKey"]
 				self.ai_name = data["aiName"]
 				self.user_name = data["userName"]
 				self.language = data["language"]
-				self.voice_file = data["cloneVoiceFile"]
+				self.voice_clone_file = data["cloneVoiceFile"]
 		except Exception as e:
 			print("failed to load wAIfu configs...")
 			print(e.message)
@@ -98,17 +108,18 @@ class waifu():
 		self.voice_recorder = recorder.audio_recorder(WAVE_OUTPUT_FILE)
 
 		# Setup voice synthesizer
-		self.voice = voice.coqui_voice_synthesizer()
 		if self.eleven_labs_API_key == "":
 			coqui_speech_model = data["coquiSpeechModel"]
+			if coqui_speech_model == "":
+				print("A model is required for coqui speech synthesis, but none was provided...")
+				exit(1)
+
 			coqui_model_speaker = data["coquiModelSpeaker"]
 
-			self.voice.set_model(coqui_speech_model, speaker=coqui_model_speaker, language=self.language)
+			self.voice = voice.coqui_voice_synthesizer(model=coqui_speech_model, speaker=coqui_model_speaker, language=self.language, voice_to_clone=self.voice_clone_file)
 			self.voice.load()
 		else:
-			#TODO ElevenLabs API integration
-			print("ElevenLabs API integration in progress")
-			exit(1)
+			self.voice = eleven_labs_voice_synthesizer(API_key=self.eleven_labs_API_key, model_id=self.eleven_labs_model_id)
 
 		# Perform final verifications
 		if not self.verify_waifu_setup():
@@ -191,7 +202,7 @@ class waifu():
 
 		response = response[len(f"{ self.ai_name }: "):]
 		try:
-			self.voice.synthesize_speech(response, VOICE_OUTPUT_FILE, self.voice_file)
+			self.voice.synthesize_speech(response, VOICE_OUTPUT_FILE)
 			playsound(VOICE_OUTPUT_FILE)
 		except Exception as e:
 			print(e.message)
