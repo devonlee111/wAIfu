@@ -83,29 +83,29 @@ class eleven_labs_voice_synthesizer():
 		return
 
 	def synthesize_speech(self, text, output_file):
-		if eleven_labs_API_key == "":
+		if self.API_key == "":
 			raise Exception(f"Eleven Labs API key required but not specified")
 
-		if eleven_labs_model_id == "":
+		if self.model_id == "":
 			raise Exception(f"Eleven Labs Model ID required but not specified")
 
 		headers = {
 			"Accept": "audio/mpeg",
   			"Content-Type": "application/json",
-			"xi-api-key": self.eleven_labs_API_key
+			"xi-api-key": self.API_key
 		}
 
 		data = {
-			"text": "Some very long text to be read by the voice",
+			"text": text,
   			"voice_settings": {
     			"stability": 0,
     			"similarity_boost": 0
 			}
 		}
 
-		url = ELEVENLABS_TTS_URL + self.eleven_labs_model_id
+		url = ELEVENLABS_TTS_URL + self.model_id
 
-		response = requests.post(url, headers, json=data)
+		response = requests.post(url, json=data, headers=headers)
 		with open(output_file, 'wb') as f:
 			for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
 				if chunk:

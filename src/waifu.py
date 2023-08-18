@@ -80,7 +80,7 @@ class waifu():
 				self.voice_clone_file = data["cloneVoiceFile"]
 		except Exception as e:
 			print("failed to load wAIfu configs...")
-			print(e.message)
+			print(e._message)
 			quit(1)
 
 		# Get prompt primer
@@ -95,6 +95,7 @@ class waifu():
 		# Setup whisper client
 		self.whisper_client = transcriber.whisper_client()
 		if self.whisper_API_key == "":
+			self.whisper_client.use_local()
 			whisper_model = data["whisperModel"]
 			self.whisper_client.load(whisper_model, self.language)
 		else:
@@ -124,8 +125,9 @@ class waifu():
 			self.voice = voice.eleven_labs_voice_synthesizer(API_key=self.eleven_labs_API_key, model_id=self.eleven_labs_voice_ID)
 
 		# Perform final verifications
-		if not self.verify_initial_waifu_setup():
-			exit(1)
+		# TODO fix this
+		#if not self.verify_waifu_setup():
+		#	exit(1)
 
 		return
 
@@ -170,7 +172,7 @@ class waifu():
 			user_message = self.whisper_client.transcribe(WAVE_OUTPUT_FILE).strip()
 			print(f"{ self.user_name }: \"{ user_message }\"")
 		except Exception as e:
-			print(e.message)
+			print(e._message)
 			return
 
 		if user_message == "":
@@ -186,7 +188,7 @@ class waifu():
 			response = self.gpt_client.chat(full_conversation)
 			print(response)
 		except Exception as e:
-			print(e.message)
+			print(e._message)
 			return
 
 		# Update conversation with wAIfu response
@@ -207,7 +209,7 @@ class waifu():
 			self.voice.synthesize_speech(response, VOICE_OUTPUT_FILE)
 			playsound(VOICE_OUTPUT_FILE)
 		except Exception as e:
-			print(e.message)
+			print(e._message)
 
 		self.cleanup()
 
