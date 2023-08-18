@@ -25,6 +25,7 @@ class waifu():
 		self.whisper_API_key = ""
 		self.gpt_API_key = ""
 		self.eleven_labs_API_key = ""
+		self.eleven_labs_voice_ID = ""
 		self.voice_recorder = None
 		self.gpt_client = None
 		self.whisper_client = None
@@ -72,6 +73,7 @@ class waifu():
 				self.whisper_API_key = data["openAIWhisperAPIKey"]
 				self.gpt_API_key = data["openAIGPTAPIKey"]
 				self.eleven_labs_API_key = data["elevenLabsAPIKey"]
+				self.eleven_labs_voice_ID = data["elevenLabsVoiceID"]
 				self.ai_name = data["aiName"]
 				self.user_name = data["userName"]
 				self.language = data["language"]
@@ -87,7 +89,7 @@ class waifu():
 		file.close()
 
 		# Perform final verifications
-		if not self.verify_waifu_configs():
+		if not self.verify_initial_waifu_configs():
 			exit(1)
 
 		# Setup whisper client
@@ -119,10 +121,10 @@ class waifu():
 			self.voice = voice.coqui_voice_synthesizer(model=coqui_speech_model, speaker=coqui_model_speaker, language=self.language, voice_to_clone=self.voice_clone_file)
 			self.voice.load()
 		else:
-			self.voice = eleven_labs_voice_synthesizer(API_key=self.eleven_labs_API_key, model_id=self.eleven_labs_model_id)
+			self.voice = voice.eleven_labs_voice_synthesizer(API_key=self.eleven_labs_API_key, model_id=self.eleven_labs_voice_ID)
 
 		# Perform final verifications
-		if not self.verify_waifu_setup():
+		if not self.verify_initial_waifu_setup():
 			exit(1)
 
 		return

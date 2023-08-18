@@ -3,7 +3,7 @@
   "openAIGPTAPIKey": "",
   "elevenLabsAPIKey": "",
   "voiceEngine": "coquiTTS",
-  "sttEngine": "whisper local",
+  "ttsEngine": "whisper local",
   "promptFile": "prompt.txt",
   "language": "en",
   "aiName": "wAIfu",

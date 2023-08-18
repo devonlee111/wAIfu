@@ -43,4 +43,4 @@ class whisper_client():
 			audio_file = open("file", self.language)
 			transcription = openai.Audio.transcribe("whisper-1", audio_file)
 
-	return transcription["text"]
+		return transcription["text"]

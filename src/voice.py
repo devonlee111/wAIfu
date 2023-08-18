@@ -12,8 +12,8 @@ class voice_synthesizer():
 	def synthesize_speech(self):
 		return
 
-class coqui_voice_synthesizer(voice_synthesizer, model = "", speaker = "", language = "", voice_to_clone = ""):
-	def __init__(self):
+class coqui_voice_synthesizer():
+	def __init__(self, model = "", speaker = "", language = "", voice_to_clone = ""):
 		self.tts = None
 		self.model = model
 		self.speaker = speaker
@@ -105,7 +105,7 @@ class eleven_labs_voice_synthesizer():
 
 		url = ELEVENLABS_TTS_URL + self.eleven_labs_model_id
 
-		response = requests.post(url, json=data, headers)
+		response = requests.post(url, headers, json=data)
 		with open(output_file, 'wb') as f:
 			for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
 				if chunk:
