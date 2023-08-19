@@ -14,21 +14,14 @@ WAVE_OUTPUT_FILE = "output.wav"
 CHAT_HISTORY_FILE = "chat.history"
 VOICE_OUTPUT_FILE = "response.wav"
 
-VOICE_ENGINE_COQUI = "coquiTTS"
-VOICE_ENGINE_ELEVENLABS = "eleven labs"
-
 STT_ENGINE_WHISPER_LOCAL = "whisper local"
 STT_ENGINE_WHISPER_API = "whisper api"
 
 class waifu():
 	def __init__(self):
-		self.whisper_API_key = ""
 		self.gpt_API_key = ""
-		self.eleven_labs_API_key = ""
-		self.eleven_labs_voice_ID = ""
 		self.voice_recorder = None
 		self.gpt_client = None
-		self.whisper_client = None
 		self.listener = None
 		self.voice = None
 
@@ -69,11 +62,7 @@ class waifu():
 				data = json.load(config_file)
 				prompt_file = data["promptFile"]
 				voice_engine = data["voiceEngine"]
-				tts_engine = data["ttsEngine"]
-				self.whisper_API_key = data["openAIWhisperAPIKey"]
 				self.gpt_API_key = data["openAIGPTAPIKey"]
-				self.eleven_labs_API_key = data["elevenLabsAPIKey"]
-				self.eleven_labs_voice_ID = data["elevenLabsVoiceID"]
 				self.ai_name = data["aiName"]
 				self.user_name = data["userName"]
 				self.language = data["language"]
@@ -94,13 +83,9 @@ class waifu():
 
 		# Setup whisper client
 		self.whisper_client = transcriber.whisper_client()
-		if self.whisper_API_key == "":
-			self.whisper_client.use_local()
-			whisper_model = data["whisperModel"]
-			self.whisper_client.load(whisper_model, self.language)
-		else:
-			self.whisper_client.use_API()
-			self.whisper_client.set_api_key(self.whisper_API_key)
+		self.whisper_client.use_local()
+		whisper_model = data["whisperModel"]
+		self.whisper_client.load(whisper_model, self.language)
 
 		# Setup gpt client
 		self.gpt_client = chat.gpt_client()
@@ -111,18 +96,15 @@ class waifu():
 		self.voice_recorder = recorder.audio_recorder(WAVE_OUTPUT_FILE)
 
 		# Setup voice synthesizer
-		if self.eleven_labs_API_key == "":
-			coqui_speech_model = data["coquiSpeechModel"]
-			if coqui_speech_model == "":
-				print("A model is required for coqui speech synthesis, but none was provided...")
-				exit(1)
+		coqui_speech_model = data["coquiSpeechModel"]
+		if coqui_speech_model == "":
+			print("A model is required for coqui speech synthesis, but none was provided...")
+			exit(1)
 
-			coqui_model_speaker = data["coquiModelSpeaker"]
+		coqui_model_speaker = data["coquiModelSpeaker"]
 
-			self.voice = voice.coqui_voice_synthesizer(model=coqui_speech_model, speaker=coqui_model_speaker, language=self.language, voice_to_clone=self.voice_clone_file)
-			self.voice.load()
-		else:
-			self.voice = voice.eleven_labs_voice_synthesizer(API_key=self.eleven_labs_API_key, model_id=self.eleven_labs_voice_ID)
+		self.voice = voice.coqui_voice_synthesizer(model=coqui_speech_model, speaker=coqui_model_speaker, language=self.language, voice_to_clone=self.voice_clone_file)
+		self.voice.load()
 
 		# Perform final verifications
 		# TODO fix this
