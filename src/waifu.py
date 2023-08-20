@@ -188,7 +188,7 @@ class waifu():
 
 			# Eleven Labs API body
 			data = {
-				"text": chat_response,
+				"text": waifu_response,
 				"voice_settings": {
 					"stability": 0,
 					"similarity_boost": 0
