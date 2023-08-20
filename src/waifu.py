@@ -29,9 +29,7 @@ class waifu():
 		self.voice_recorder = None
 
 		# AI API information
-		self.gpt_API_key = ""
-		self.whisper_API_key = ""
-		self.eleven_labs_API_key
+		self.eleven_labs_API_key = ""
 
 		# Name assigned to the AI
 		self.ai_name = ""
@@ -62,8 +60,7 @@ class waifu():
 			with open(CONFIG_FILE) as config_file:
 				data = json.load(config_file)
 				prompt_file = data["promptFile"]
-				self.whisper_API_key = data["openAIWhisperAPIKey"]
-				self.gpt_API_key = data["openAIGPTAPIKey"]
+				openai.api_key = data["openAIAPIKey"]
 				self.eleven_labs_API_key = data["elevenLabsAPIKey"]
 				self.eleven_labs_voice_ID = data["elevenLabsVoiceID"]
 				self.ai_name = data["aiName"]
@@ -95,12 +92,8 @@ class waifu():
 			print("no prompt primer found...")
 			verified = False
 
-		if self.whisper_API_key == "":
-			print("OpenAI whisper API key has not been configured...")
-			verified = False
-
-		if self.gpt_API_key == "":
-			print("OpenAI gpt API key has not been configured...")
+		if openai.api_key == "":
+			print("OpenAI API key has not been configured...")
 			verified = False
 
 		if self.eleven_labs_API_key == "":
@@ -127,13 +120,14 @@ class waifu():
 	# Play audio response to
 	def run_chat_pipeline(self):
 		# Transcribe user speech into text
-		audio_file = open(WAVE_OUTPUT_FILE, self.language)
+		audio_file = open(WAVE_OUTPUT_FILE, "rb")
 
 		# Use OpenAI Whisper to transcribe speech
 		try:
 			transcription = openai.Audio.transcribe("whisper-1", audio_file)
 		except Exception as e:
-			print(e._message)
+			print("transcription failed")
+			print(e.message)
 			return
 
 		user_message = transcription["text"].strip()
@@ -166,6 +160,7 @@ class waifu():
 			return
 
 		waifu_response = response['choices'][0]['message']['content'].strip()
+		print(waifu_response)
 
 		# Update conversation with wAIfu response
 		self.conversation.append({ "role": "assistant", "content": waifu_response })
@@ -180,7 +175,7 @@ class waifu():
 		chat_file.write(f"\n{ self.ai_name }: { waifu_response } ")
 		chat_file.close()
 
-		chat_response = chat_response[len(f"{ self.ai_name }: "):]
+		waifu_response = waifu_response[len(f"{ self.ai_name }: "):]
 
 		# Send response to Eleven Labs for voice synthesis
 		try:
@@ -188,7 +183,7 @@ class waifu():
 			headers = {
 				"Accept": "audio/mpeg",
 				"Content-Type": "application/json",
-				"xi-api-key": self.API_key
+				"xi-api-key": self.eleven_labs_API_key
 			}
 
 			# Eleven Labs API body

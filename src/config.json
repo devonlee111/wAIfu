@@ -1,7 +1,6 @@
 {
 	"promptFile": "prompt.txt",
-	"openAIWhisperAPIKey": "",
-	"openAIGPTAPIKey": "",
+	"openAIAPIKey": "",
 	"elevenLabsAPIKey": "",
 	"elevenLabsVoiceID": "",
 	"aiName": "wAIfu",
